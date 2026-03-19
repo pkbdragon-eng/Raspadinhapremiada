@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  />
+  <title>Raspadinha Premiada</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+    }
+
+    :root {
+      --bg1: #070b2a;
+      --bg2: #0a1036;
+      --bg3: #1a0d2f;
+      --gold: #f4c430;
+      --white: #f4f4f8;
+      --muted: #b7bfd9;
+      --stroke: rgba(255,255,255,0.14);
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(59, 92, 255, 0.22), transparent 26%),
+        radial-gradient(circle at 80% 15%, rgba(255, 72, 160, 0.18), transparent 24%),
+        radial-gradient(circle at 50% 90%, rgba(0, 255, 149, 0.14), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2) 45%, var(--bg3));
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      background: rgba(255,255,255,0.9);
+      opacity: 0.85;
+      animation: floatDown linear infinite;
+      border-radius: 2px;
+      filter: blur(0.2px);
+    }
+
+    .particle.circle {
+      border-radius: 50%;
+    }
+
+    @keyframes floatDown {
+      from { transform: translateY(-10vh) rotate(0deg); }
+      to { transform: translateY(110vh) rotate(540deg); }
+    }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 34px 22px 60px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.2fr 320px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: #d8def5;
+      font-size: 1.08rem;
+      line-height: 1.55;
+      max-width: 780px;
+    }
+
+    .side-panel {
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+      border: 1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 22px;
+      padding: 16px 18px;
+    }
+
+    .panel-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      color: #ecefff;
+      font-size: 1.05rem;
+    }
+
+    .panel-row small {
+      font-size: 0.95rem;
+      color: #d3daf6;
+      font-weight: 700;
+    }
+
+    .progress-shell {
+      margin-top: 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      height: 16px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.25);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f4c430, #ffd86b, #ffe999);
+      box-shadow: 0 0 18px rgba(244,196,48,0.6);
+      transition: width 0.4s ease;
+      position: relative;
+    }
+
+    .progress-fill::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50px;
+      right: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5));
+      filter: blur(4px);
+    }
+
+    .cards {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      position: relative;
+      min-height: 205px;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        linear-gradient(180deg, rgba(255,212,74,0.10), rgba(255,255,255,0.03) 35%, rgba(0,0,0,0.12)),
+        linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      box-shadow:
+        0 10px 28px rgba(0,0,0,0.22),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card.revealed {
+      outline: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .card-header {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .tag {
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #f2f5ff;
+    }
+
+    .scratch-box {
+      position: relative;
+      width: 100%;
+      height: 205px;
+      overflow: hidden;
+    }
+
+    .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 44px 20px 20px;
+      text-align: center;
+      z-index: 1;
+      color: #fff;
+    }
+
+    .content-inner {
+      max-width: 92%;
+    }
+
+    .content h3 {
+      margin: 0;
+      font-size: clamp(1.4rem, 2vw, 1.95rem);
+      font-weight: 900;
+      line-height: 1.15;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.28);
+    }
+
+    .content p {
+      margin: 12px 0 0;
+      color: #dfe5ff;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .content.win h3 {
+      color: #fff7c1;
+      text-shadow: 0 0 18px rgba(244,196,48,0.35);
+    }
+
+    .content.win p {
+      color: #f5f8ff;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .card-done {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: 0.25s ease;
+    }
+
+    .card.revealed .card-done {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .done-pill {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #eef3ff;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      backdrop-filter: blur(8px);
+    }
+
+    .status-box {
+      margin-top: 24px;
+      display: none;
+      border-radius: 24px;
+      padding: 22px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+      border: 1px solid var(--stroke);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      animation: pop 0.45s ease;
+    }
+
+    .status-box.show {
+      display: block;
+    }
+
+    .status-box.win {
+      border-color: rgba(244,196,48,0.35);
+      box-shadow:
+        0 24px 64px rgba(0,0,0,0.35),
+        0 0 26px rgba(244,196,48,0.16);
+    }
+
+    .status-box.done {
+      border-color: rgba(255,255,255,0.16);
+    }
+
+    .status-box h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      line-height: 1.1;
+    }
+
+    .status-box p {
+      margin: 0;
+      color: #dae2ff;
+      font-size: 1.05rem;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
+    .glow-ring {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 8;
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .glow-ring.active {
+      opacity: 1;
+    }
+
+    .glow-ring::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle, rgba(244,196,48,0.14), transparent 30%),
+        radial-gradient(circle at center, rgba(255,255,255,0.10), transparent 42%);
+      filter: blur(30px);
+      animation: pulseGlow 1.2s ease-in-out 2;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(0.95); opacity: 0.5; }
+      50% { transform: scale(1.02); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+
+    .confetti {
+      position: fixed;
+      top: -20px;
+      width: 12px;
+      height: 18px;
+      opacity: 0.95;
+      z-index: 9;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      to {
+        transform: translateY(110vh) rotate(760deg);
+      }
+    }
+
+    .shine-win {
+      position: absolute;
+      inset: -60%;
+      background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255,255,255,0.00) 35%,
+        rgba(255,255,255,0.23) 50%,
+        rgba(255,255,255,0.00) 65%,
+        transparent 80%
+      );
+      transform: rotate(16deg) translateX(-120%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .card.win-effect .shine-win {
+      animation: shinePass 1.2s ease 1;
+    }
+
+    @keyframes shinePass {
+      to {
+        transform: rotate(16deg) translateX(180%);
+      }
+    }
+
+    @keyframes pop {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wrap {
+        padding: 24px 14px 44px;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .hero p {
+        font-size: 0.98rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles"></div>
+  <div class="glow-ring" id="glowRing"></div>
+
+  <div class="wrap">
+    <section class="topbar">
+      <div class="hero">
+        <h1>Raspadinha • 6 Tentativas</h1>
+        <p>
+          Você vai raspar as <strong>6 raspadinhas</strong>. Nas primeiras 5 aparece
+          <strong>“Tente novamente... você está quase!”</strong> e
+          <strong>somente na última raspagem</strong> você ganha
+          <strong>um brinde</strong>.
+        </p>
+      </div>
+
+      <div class="side-panel">
+        <div class="panel-card">
+          <div class="panel-row">
+            <small>Raspagens feitas</small>
+            <span id="attemptText">0 / 6</span>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-row">
+            <small>Progresso geral</small>
+            <span id="progressPercent">0%</span>
+          </div>
+          <div class="progress-shell">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cards" id="cards"></section>
+
+    <section class="status-box done" id="resultBox">
+      <h2 id="resultTitle">✨ Continue raspando</h2>
+      <p id="resultText">Revele todas as raspadinhas para chegar ao prêmio final.</p>
+    </section>
+  </div>
+
+  <script>
+    const cardsContainer = document.getElementById("cards");
+    const resultBox = document.getElementById("resultBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultText = document.getElementById("resultText");
+    const attemptText = document.getElementById("attemptText");
+    const progressPercent = document.getElementById("progressPercent");
+    const progressFill = document.getElementById("progressFill");
+    const glowRing = document.getElementById("glowRing");
+
+    const totalCards = 6;
+    let revealedCount = 0;
+
+    const cardData = Array.from({ length: totalCards }, (_, index) => {
+      const isLastPrize = index === totalCards - 1;
+      return isLastPrize
+        ? {
+            title: "🎁 Você ganhou um brinde!",
+            subtitle: "Parabéns! Tire um print e envie para validar ✅",
+            type: "win"
+          }
+        : {
+            title: "😅 Tente novamente... você está quase!",
+            subtitle: "Continue raspando para chegar ao prêmio final.",
+            type: "lose"
+          };
+    });
+
+    function createParticles() {
+      const container = document.getElementById("particles");
+      const total = window.innerWidth < 700 ? 45 : 80;
+
+      for (let i = 0; i < total; i++) {
+        const el = document.createElement("span");
+        const size = Math.random() * 11 + 4;
+        el.className = "particle " + (Math.random() > 0.55 ? "circle" : "");
+        el.style.width = size + "px";
+        el.style.height = (Math.random() > 0.55 ? size : size * 0.78) + "px";
+        el.style.left = Math.random() * 100 + "vw";
+        el.style.animationDuration = (Math.random() * 10 + 8) + "s";
+        el.style.animationDelay = (-Math.random() * 12) + "s";
+        el.style.opacity = (Math.random() * 0.5 + 0.35).toFixed(2);
+        container.appendChild(el);
+      }
+    }
+
+    function updateProgress() {
+      const percent = Math.round((revealedCount / totalCards) * 100);
+      attemptText.textContent = `${revealedCount} / ${totalCards}`;
+      progressPercent.textContent = `${percent}%`;
+      progressFill.style.width = percent + "%";
+    }
+
+    function launchConfetti() {
+      const colors = ["#f4c430", "#ffd86b", "#ffffff", "#8fe8ff", "#ff7ad9"];
+
+      for (let i = 0; i < 150; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti";
+        piece.style.left = Math.random() * 100 + "vw";
+        piece.style.width = (Math.random() * 8 + 6) + "px";
+        piece.style.height = (Math.random() * 12 + 8) + "px";
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDuration = (Math.random() * 2 + 2.5) + "s";
+        piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+        if (Math.random() > 0.55) piece.style.borderRadius = "50%";
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 5000);
+      }
+    }
+
+    function activateWinEffects(card) {
+      card.classList.add("win-effect");
+      glowRing.classList.add("active");
+      launchConfetti();
+      setTimeout(() => glowRing.classList.remove("active"), 1800);
+    }
+
+    function updateStatus(isWin) {
+      resultBox.classList.add("show");
+      resultBox.classList.remove("win", "done");
+
+      if (isWin) {
+        resultBox.classList.add("win");
+        resultTitle.textContent = "🎉 Parabéns!";
+        resultText.textContent = "Você ganhou um brinde. Tire um print e envie para validar seu prêmio.";
+        return;
+      }
+
+      resultBox.classList.add("done");
+
+      const remaining = totalCards - revealedCount;
+
+      if (remaining > 0) {
+        resultTitle.textContent = "✨ Continue raspando";
+        resultText.textContent = `Você já revelou ${revealedCount} de ${totalCards}. Faltam ${remaining} raspadinha(s) para chegar ao prêmio final.`;
+      } else {
+        resultTitle.textContent = "🎉 Parabéns!";
+        resultText.textContent = "Você revelou todas as raspadinhas e ganhou um brinde.";
+      }
+    }
+
+    function setupScratch(card, isWin) {
+      const canvas = card.querySelector("canvas");
+      const box = card.querySelector(".scratch-box");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+
+      let isDrawing = false;
+      let revealed = false;
+
+      function paintCover() {
+        const rect = box.getBoundingClientRect();
+        canvas.width = Math.max(1, Math.floor(rect.width));
+        canvas.height = Math.max(1, Math.floor(rect.height));
+
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, "#6f6f77");
+        gradient.addColorStop(0.45, "#a4a4ad");
+        gradient.addColorStop(1, "#575760");
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < 140; i++) {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.18})`;
+          ctx.arc(
+            Math.random() * canvas.width,
+            Math.random() * canvas.height,
+            Math.random() * 2 + 0.8,
+            0,
+            Math.PI * 2
+          );
+          ctx.fill();
+        }
+
+        const shine = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        shine.addColorStop(0, "rgba(255,255,255,0)");
+        shine.addColorStop(0.35, "rgba(255,255,255,0.20)");
+        shine.addColorStop(0.5, "rgba(255,255,255,0.08)");
+        shine.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = shine;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "rgba(255,255,255,0.96)";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = "bold 22px Arial";
+        ctx.fillText("RASPE AQUI", canvas.width / 2, canvas.height / 2);
+      }
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+
+        if (e.touches && e.touches.length > 0) {
+          return {
+            x: e.touches[0].clientX - rect.left,
+            y: e.touches[0].clientY - rect.top
+          };
+        }
+
+        if (e.changedTouches && e.changedTouches.length > 0) {
+          return {
+            x: e.changedTouches[0].clientX - rect.left,
+            y: e.changedTouches[0].clientY - rect.top
+          };
+        }
+
+        return {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        };
+      }
+
+      function scratch(x, y) {
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.arc(x, y, 24, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function revealCard() {
+        if (revealed) return;
+        revealed = true;
+        card.classList.add("revealed");
+        canvas.style.pointerEvents = "none";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        revealedCount++;
+        updateProgress();
+        updateStatus(isWin);
+
+        if (isWin) {
+          activateWinEffects(card);
+        }
+      }
+
+      function checkReveal() {
+        if (revealed) return;
+
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let transparentPixels = 0;
+
+        for (let i = 3; i < imageData.length; i += 4) {
+          if (imageData[i] === 0) transparentPixels++;
+        }
+
+        const percent = transparentPixels / (canvas.width * canvas.height);
+
+        if (percent > 0.28) {
+          revealCard();
+        }
+      }
+
+      canvas.addEventListener("mousedown", (e) => {
+        if (revealed) return;
+        isDrawing = true;
+        const pos = getPos(e);
+        scratch(pos.x, pos.y);
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (!isDrawing || revealed) return;
+        const pos = getPos(e);
+        scratch(pos.x, pos.y);
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (!isDrawing) return;
+        isDrawing = false;
+        checkReveal();
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        if (!isDrawing) return;
+        isDrawing = false;
+        checkReveal();
+      });
+
+      canvas.addEventListener("touchstart", (e) => {
+        if (revealed) return;
+        isDrawing = true;
+        const pos = getPos(e);
+        scratch(pos.x, pos.y);
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener("touchmove", (e) => {
+        if (!isDrawing || revealed) return;
+        const pos = getPos(e);
+        scratch(pos.x, pos.y);
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener("touchend", (e) => {
+        if (!isDrawing) return;
+        isDrawing = false;
+        checkReveal();
+        e.preventDefault();
+      }, { passive: false });
+
+      canvas.addEventListener("touchcancel", () => {
+        isDrawing = false;
+        checkReveal();
+      }, { passive: false });
+
+      paintCover();
+      window.addEventListener("resize", paintCover);
+      window.addEventListener("orientationchange", () => {
+        setTimeout(paintCover, 200);
+      });
+    }
+
+    function buildCards() {
+      cardData.forEach((item, index) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="card-header">
+            <span class="tag">Card ${index + 1}</span>
+            <span class="tag">${item.type === "win" ? "Final" : "Tentativa"}</span>
+          </div>
+
+          <div class="scratch-box">
+            <div class="content ${item.type === "win" ? "win" : ""}">
+              <div class="content-inner">
+                <h3>${item.title}</h3>
+                <p>${item.subtitle}</p>
+              </div>
+            </div>
+            <canvas></canvas>
+            <div class="shine-win"></div>
+          </div>
+
+          <div class="card-done">
+            <div class="done-pill">${item.type === "win" ? "🎁 Prêmio revelado" : "✅ Revelado"}</div>
+          </div>
+        `;
+        cardsContainer.appendChild(card);
+        setupScratch(card, item.type === "win");
+      });
+    }
+
+    createParticles();
+    buildCards();
+    updateProgress();
+  </script>
+</body>
+</html>
